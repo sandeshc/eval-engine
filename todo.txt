@@ -3,6 +3,8 @@
 3. Ensure in feature 2 that partially-relv docs always occour below relv docs
 4. Write a python code to evalute Precision@K, DCG, nDCG for each (user, query) pair
 5. Update the python code to evaluate scores as avg over all users for each query
+6. Insert description of LaSer and link to project on the index page
+7. Insert guidelines on how to evaluate the results for the users (eg. when is a result relevant?)
 
 Note : 
 (query, user) -> DCG = sum_over_i[1 to K]( rel_i [0,1,2] * f(newrank_i) [K - newrank_i + 1] / log(oldrank_i) )
