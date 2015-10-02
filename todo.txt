@@ -1,4 +1,4 @@
-1. Drop down menu for users on login page
+1. Drop down menu for users on login page (add fix: pressing up/down doesn't scroll the list)
 2. Feature to reorder the search results to get the value of 'newrank'
 3. Ensure in feature 2 that partially-relv docs always occour below relv docs
 4. Write a python code to evalute Precision@K, DCG, nDCG for each (user, query) pair
