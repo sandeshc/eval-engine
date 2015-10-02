@@ -75,14 +75,11 @@
 		<div>
 			<h4> Guidelines for Evaluation </h4>
 			<ul>
-				<li>Three point relevance scale: relevant (2), partly relevant (1) and not relevant (0). </li>
-				<li>To be deemed relevant, a page would have to closely match the query, and give some information about it. </li>
-				<li>A partly relevant page is defined as either a page giving information on where to get information (a hypertext link, an address or a reference to a book or article about the subject),
-				<br/>or some information connected to the query, but not quite to the point. </li>
-				<li>Pages not containing any information about the query topic, were deemed not relevant, even if they contained information connected to some of the query terms.</li>
-				<li>Mirror pages, which contain the same information, but have a different URL should be counted as ordinary pages, whereas copy pages (same contents and same URL) get 0 score,
-				<br/>since the user is certainly not interested in such links. </li>
-				<li>Also error reports, such as not existing page or no response get the 0 score (no response pages after some additional trials).</li>
+				<li> Each result can be marked as Relevant(2), Partially-Relevant(1) or Irrelevant(0) ;
+					<br/>based on the extent of the relevance of the search query to the result (description of the paper + context) displayed. </li>
+					<br/>
+				<li> The ordering of the results can be modified to reflect the order of relevance among the search results, 
+					<br/>with the most relevant results having the least rank (top most result). </li>
 			</ul>
 		</div>
 	</div>
