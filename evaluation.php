@@ -110,11 +110,11 @@ $qval = $result[0]['value'];
 							$paperval = $result['0']['value'];
 
 							echo '<tr>
-							<td> ' . $systemResults[$s][strval($i)]['rank'] . ' </td>
-							<input type="hidden" class="newrank" name="newrank-'.chr($s + 65).'-'.strval($i).'" 
-								value="'.$systemResults[$s][strval($i)]['rank'].'"/>
-							<td> ' . $systemResults[$s][strval($i)]['pid'] . ' </td>
-							<input type="hidden" name="pid-'.chr($s + 65).'-'.strval($i).'" value="'.$systemResults[$s][strval($i)]['pid'].'"/>
+							<td> ' . $systemResults[$s][strval($i)]['rank'] . '
+							<input type="hidden" class="newrank" name="newrank-'.chr($s + 65).'-'.strval($i).'"
+								value="'.$systemResults[$s][strval($i)]['rank'].'"/> </td>
+							<td> ' . $systemResults[$s][strval($i)]['pid'] . '
+							<input type="hidden" name="pid-'.chr($s + 65).'-'.strval($i).'" value="'.$systemResults[$s][strval($i)]['pid'].'"/> </td>
 							<td> ' . $paperval . ' </td>
 							<td> ' . $systemResults[$s][strval($i)]['context'] . ' </td>
 							<td class="Center-Container"> <input class="rel-bar Absolute-Center" style="width:50%" type="range" min="0" max="2" step="1" value="1" name="rel-bar-'.chr($s + 65).'-'.strval($i).'"/> </td>
@@ -142,27 +142,35 @@ $qval = $result[0]['value'];
 			<?php for($s = 0; $s < $nsystems; $s++)
 			{
 				echo '$("#sortable' . chr($s + 65) . '>tbody>tr").each(function( index, value ) {
-				$(this).children(".newrank").get(0).value = index + 1; });';
+				$(this).find(".newrank").get(0).value = index + 1; });';
 			} ?>
-			
 		}
 
-		// var fixHelper = function(e, ui) {
-		// 	ui.children().each(function() {
-		// 		$(this).width($(this).width());
-		// 	});
-		// 	return ui;
-		// };
+		var fixHelper = function(e, ui) {
+			ui.children().each(function( index, value ) {
+				if($(ui).prev().size() > 0)
+					nbr = $(ui).prev();
+				else
+					nbr = $(ui).next();
+				
+				parentWidth = $(this).parents('td:first').width();
+				elemWidth = $(nbr).children().eq(index).width();
+				
+				$(this).width(elemWidth);
+				$(this).parents('td:first').width(parentWidth);
+			});
+			return ui;
+		};
 
 		$(document).ready(function() {
 			// Implementation for drag 'n drop feature for reordering the results of a particular system
-			// to use fixHelper use '{ helper: fixHelper }' as argument to sortable()
 			<?php for($s = 0; $s < $nsystems; $s++)
 			{
-				echo '$( "#sortable' . chr($s + 65) . ' tbody" ).sortable({cursor: "move", 
+				echo '$( "#sortable' . chr($s + 65) . ' tbody" ).sortable({cursor: "move",
+					helper: fixHelper,
 					stop: function(ev,ui){
 						setnewrank();
-						newrank = $(ui.item[0]).children(".newrank").get(0).value;
+						newrank = $(ui.item[0]).find(".newrank").get(0).value;
 						myrel = $(ui.item[0]).find(".rel-bar").get(0).value;
 
 						if(newrank > 1)
@@ -195,7 +203,7 @@ $qval = $result[0]['value'];
 			<?php
 				echo '$(".rel-bar").change(function(){
 						myrow = $(this).parents("tr:first");
-						myrank = parseInt($(myrow).children(".newrank").get(0).value);
+						myrank = parseInt($(myrow).find(".newrank").get(0).value);
 						myrel = $(myrow).find(".rel-bar").get(0).value;
 
 						while(myrank > 1)
