@@ -30,6 +30,7 @@ $qval = $result[0]['value'];
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="css/index.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -43,6 +44,20 @@ $qval = $result[0]['value'];
 	</script>
 	<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 	<style type="text/css"> th, td { text-align: center; } </style>
+	<style type="text/css">
+		.Center-Container {
+		  position: relative;
+		}
+
+		.Absolute-Center {
+		  width: 50%;
+		  height: 50%;
+		  overflow: auto;
+		  margin: auto;
+		  position: absolute;
+		  top: 0; left: 0; bottom: 0; right: 0;
+		}
+	</style>
 
 	<title> LaSer Evaluation Engine </title>
 </head>
@@ -72,78 +87,75 @@ $qval = $result[0]['value'];
 					$systems = range(0, $nsystems - 1);
 					shuffle($systems);
 					echo '<input type="hidden" name="nsystems" value="' . strval($nsystems) . '"/>';
-					for($s = 0; $s < $nsystems; $s++)
-					{
-						echo '<th> SYSTEM ' . chr($s + 65) . ' </th>';
-						echo '<input type="hidden" name="' . chr($s + 65) . '-value" value="' . strval($systems[$s]) . '"/>';
-					}
 				?>
 			</tr>
-			<tr>
-				<?php
-					$systemResults = array();
-					for($s = 0; $s < $nsystems; $s++)
+			<?php
+				$systemResults = array();
+				for($s = 0; $s < $nsystems; $s++)
+				{
+					$query = "SELECT * FROM modelresults WHERE qid = " . $qid . " and systyp = '" . strval($systems[$s]) . "' ORDER BY rank";
+					$systemResults[] = db_select($query);
+					if($systemResults[$s] === false) die("SQL Error: " . db_error());
+				}
+
+				$mincount = count($systemResults[0]);
+				for($s = 1; $s < $nsystems; $s++)
+					$mincount = min($mincount, count($systemResults[$s]));
+				echo '<input type="hidden" name="mincount" value="' . strval($mincount) . '"/>';
+
+				for($s = 0; $s < $nsystems; $s++)
+				{
+					echo
+					'<tr> <td>
+						<table class="grid table table-bordered" class="sortab" id="sortable' . chr($s + 65) . '">
+							<thead>
+								<tr>
+									<th colspan=5> SYSTEM ' . chr($s + 65) . ' </th>
+									<input type="hidden" name="' . chr($s + 65) . '-value" value="' . strval($systems[$s]) . '"/>
+								</tr>
+								<tr>
+									<th> Rank </th>
+									<th> Link </th>
+									<th> Paper </th>
+									<th> Context </th>
+									<th> Relevance </th>
+								</tr>
+							</thead>
+							<tbody>';
+
+					// Generating the result-table contents
+					for($i = 0; $i < $mincount; $i++)
 					{
-						$query = "SELECT * FROM modelresults WHERE qid = " . $qid . " and systyp = '" . strval($systems[$s]) . "' ORDER BY rank";
-						$systemResults[] = db_select($query);
-						if($systemResults[$s] === false) die("SQL Error: " . db_error());
+						$query = "SELECT * FROM papers WHERE id = " . trim($systemResults[$s][strval($i)]['pid'], '\'');
+						$result = db_select($query);
+						if($result === false) die("SQL Error: " . db_error());
+						$paperval = explode(" ", $result['0']['value'], 2);
+						$paperlink = $paperval[0];
+						$papertitle = $paperval[1];
+
+						echo '<tr>
+						<td> ' . $systemResults[$s][strval($i)]['rank'] . '
+						<input type="hidden" class="newrank" name="newrank-'.chr($s + 65).'-'.strval($i).'"
+							value="'.$systemResults[$s][strval($i)]['rank'].'"/> </td>
+						<td> <a href="' . $paperlink . '" target="_blank"> &#9733; </a>
+						<input type="hidden" name="pid-'.chr($s + 65).'-'.strval($i).'" value="'.$systemResults[$s][strval($i)]['pid'].'"/> </td>
+						<td> ' . $papertitle . ' </td>
+						<td> ' . $systemResults[$s][strval($i)]['context'] . ' </td>
+						<td class="Center-Container"> <input class="rel-bar Absolute-Center" style="width:50%" type="range" min="0" max="2" step="1" value="1" name="rel-bar-'.chr($s + 65).'-'.strval($i).'"/> </td>
+						</tr>';
 					}
 
-					$mincount = count($systemResults[0]);
-					for($s = 1; $s < $nsystems; $s++)
-						$mincount = min($mincount, count($systemResults[$s]));
-					echo '<input type="hidden" name="mincount" value="' . strval($mincount) . '"/>';
-
-					for($s = 0; $s < $nsystems; $s++)
-					{
-						echo
-						'<td>
-							<table class="grid table table-bordered" class="sortab" id="sortable' . chr($s + 65) . '">
-								<thead>
-									<tr>
-										<th> Rank </th>
-										<th> PID </th>
-										<th> Paper </th>
-										<th> Context </th>
-										<th> Relevance </th>
-									</tr>
-								</thead>
-								<tbody>';
-
-						// Generating the result-table contents
-						for($i = 0; $i < $mincount; $i++)
-						{
-							$query = "SELECT * FROM papers WHERE id = " . trim($systemResults[$s][strval($i)]['pid'], '\'');
-							$result = db_select($query);
-							if($result === false) die("SQL Error: " . db_error());
-							$paperval = explode(" ", $result['0']['value'], 2);
-							$paperlink = $paperval[0];
-							$papertitle = $paperval[1];
-
-							echo '<tr>
-							<td> ' . $systemResults[$s][strval($i)]['rank'] . '
-							<input type="hidden" class="newrank" name="newrank-'.chr($s + 65).'-'.strval($i).'"
-								value="'.$systemResults[$s][strval($i)]['rank'].'"/> </td>
-							<td> <a href="' . $paperlink . '" target="_blank">' . $systemResults[$s][strval($i)]['pid'] . '</a>
-							<input type="hidden" name="pid-'.chr($s + 65).'-'.strval($i).'" value="'.$systemResults[$s][strval($i)]['pid'].'"/> </td>
-							<td> ' . $papertitle . ' </td>
-							<td> ' . $systemResults[$s][strval($i)]['context'] . ' </td>
-							<td class="Center-Container"> <input class="rel-bar Absolute-Center" style="width:50%" type="range" min="0" max="2" step="1" value="1" name="rel-bar-'.chr($s + 65).'-'.strval($i).'"/> </td>
-							</tr>';
-						}
-
-						echo
-						'		</tbody>
-							</table>
-						</td>';
-					}
-				?>
-			</tr>
-			<tr>
-				<th colspan=2>
-					<button type="submit" class="btn btn-primary">Submit</button>
-		    	</th>
-			</tr>
+					echo
+					'		</tbody>
+						</table>
+					</td> </tr>';
+				}
+			?>
+			<tr> <td>
+				<table class="Center-Container">
+					<tr class="Absolute-Center"> <button type="submit" class="btn btn-primary">Submit</button> </tr>
+				</table>
+			</td> </tr>
 		</table>
 	</form>
 	<script>
@@ -245,19 +257,6 @@ $qval = $result[0]['value'];
 		});
 	</script>
 	<style type="text/css">
-		.Center-Container {
-		  position: relative;
-		}
-
-		.Absolute-Center {
-		  width: 50%;
-		  height: 50%;
-		  overflow: auto;
-		  margin: auto;
-		  position: absolute;
-		  top: 0; left: 0; bottom: 0; right: 0;
-		}
-
 		<?php for($s = 0; $s < $nsystems; $s++)
 		{
 			echo '#sortable' . chr($s + 65) . ' tbody tr:hover {cursor: pointer;}';
