@@ -33,6 +33,15 @@ $qval = $result[0]['value'];
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+	    tex2jax: {
+	      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+	      processEscapes: true
+	    }
+	  });
+	</script>
+	<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 	<style type="text/css"> th, td { text-align: center; } </style>
 
 	<title> LaSer Evaluation Engine </title>
@@ -107,15 +116,17 @@ $qval = $result[0]['value'];
 							$query = "SELECT * FROM papers WHERE id = " . trim($systemResults[$s][strval($i)]['pid'], '\'');
 							$result = db_select($query);
 							if($result === false) die("SQL Error: " . db_error());
-							$paperval = $result['0']['value'];
+							$paperval = explode(" ", $result['0']['value'], 2);
+							$paperlink = $paperval[0];
+							$papertitle = $paperval[1];
 
 							echo '<tr>
 							<td> ' . $systemResults[$s][strval($i)]['rank'] . '
 							<input type="hidden" class="newrank" name="newrank-'.chr($s + 65).'-'.strval($i).'"
 								value="'.$systemResults[$s][strval($i)]['rank'].'"/> </td>
-							<td> ' . $systemResults[$s][strval($i)]['pid'] . '
+							<td> <a href="' . $paperlink . '" target="_blank">' . $systemResults[$s][strval($i)]['pid'] . '</a>
 							<input type="hidden" name="pid-'.chr($s + 65).'-'.strval($i).'" value="'.$systemResults[$s][strval($i)]['pid'].'"/> </td>
-							<td> ' . $paperval . ' </td>
+							<td> ' . $papertitle . ' </td>
 							<td> ' . $systemResults[$s][strval($i)]['context'] . ' </td>
 							<td class="Center-Container"> <input class="rel-bar Absolute-Center" style="width:50%" type="range" min="0" max="2" step="1" value="1" name="rel-bar-'.chr($s + 65).'-'.strval($i).'"/> </td>
 							</tr>';
