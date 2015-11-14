@@ -33,6 +33,7 @@ if($row['state'] === '1')
 }
 $userid = $row['id'];
 
+# Place to change the number of equations evaluated by user
 $query = "SELECT * FROM queries WHERE id >= (SELECT FLOOR( MAX(id) * RAND()) FROM queries ) ORDER BY id LIMIT 3";
 $lorqid = db_select($query);
 

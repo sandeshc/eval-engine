@@ -1,5 +1,7 @@
 import os
 import urllib
+import urllib2
+import httplib
 import ConfigParser
 from lxml import html
 import MySQLdb as mysqldb
@@ -9,6 +11,7 @@ from collections import OrderedDict
 SOM = 1
 LASER = 0
 NOTOPRES = 5
+HTTP_RETRIES = 5
 
 # disabling proxy for localhost
 os.environ['NO_PROXY'] = '127.0.0.1'
@@ -20,29 +23,49 @@ db = mysqldb.connect(sqlconf.get('database', 'server'), sqlconf.get('database', 
         sqlconf.get('database', 'password'), sqlconf.get('database', 'dbname'))
 cursor = db.cursor()
 
+def getPage(url):
+    global HTTP_RETRIES
+    attempt = 0
+    while attempt <= HTTP_RETRIES:
+        attempt += 1
+        try: 
+            pagesource = urllib2.urlopen(url).read()
+            break
+        except urllib2.HTTPError:
+            break
+        except urllib2.URLError:
+            continue
+        except httplib.HTTPException:
+            continue
+    page = html.fromstring( pagesource )
+    return page
+
+def arxivTitle(x):
+    url = 'http://arxiv.org/abs/hep-th/' + x
+    page = getPage(url)
+    return page.xpath('//h1[@class="title mathjax"]/text()')[0].strip()
+
 def laserParser(latexQuery):
     global NOTOPRES
     head = 'http://127.0.0.1/laser-search/index.php'
     query = head + '?' + urlencode( OrderedDict( mathSnippet=latexQuery ) )
-    pagesource = urllib.urlopen(query).read()
-    page = html.fromstring( pagesource )
-    pageTitles = page.xpath('//div[@class="search-result"]/center/a/text()')
-    pageLinks = page.xpath('//div[@class="search-result"]/center/a/@href')
-    pageContext = [ '$$' + x.strip() + '$$' for x in page.xpath('//div[@class="search-result"]/math/@alttext') ]
+    page = getPage(query)
+    pageTitles = [ arxivTitle(x) for x in page.xpath('//div[@class="search-result"]/center/a/text()')[:NOTOPRES] ]
+    pageLinks = page.xpath('//div[@class="search-result"]/center/a/@href')[:NOTOPRES]
+    pageContext = [ '$$' + x.strip() + '$$' for x in page.xpath('//div[@class="search-result"]/math/@alttext')[:NOTOPRES] ]
     results = zip(pageTitles, pageLinks, pageContext)
-    return results[:NOTOPRES]
+    return results
 
 def searchOnMathParser(latexQuery):
     global NOTOPRES
     head = 'http://www.searchonmath.com/result'
     query = head + '?' + urlencode( OrderedDict( equation=latexQuery ) )
-    pagesource = urllib.urlopen(query).read()
-    page = html.fromstring( pagesource )
-    pageTitles = page.xpath('//section[@class="page_content"]/article[@class="result"]/h2/a/text()')
-    pageLinks = page.xpath('//section[@class="page_content"]/article[@class="result"]/h2/a/@href')
-    pageContext = [ x.strip() for x in page.xpath('//section[@class="page_content"]/article[@class="result"]/div/div/text()') ]
+    page = getPage(query)
+    pageTitles = [ x.replace('_', ' ') for x in page.xpath('//section[@class="page_content"]/article[@class="result"]/h2/a/text()')[:NOTOPRES] ]
+    pageLinks = page.xpath('//section[@class="page_content"]/article[@class="result"]/h2/a/@href')[:NOTOPRES]
+    pageContext = [ x.strip() for x in page.xpath('//section[@class="page_content"]/article[@class="result"]/div/div/text()')[:NOTOPRES] ]
     results = zip(pageTitles, pageLinks, pageContext)
-    return results[:NOTOPRES]
+    return results
 
 def transform(value):
     value = value.replace('<=', '\\le ')
