@@ -1,4 +1,5 @@
 import os
+import socket
 import urllib
 import urllib2
 import httplib
@@ -32,11 +33,16 @@ def getPage(url):
             pagesource = urllib2.urlopen(url).read()
             break
         except urllib2.HTTPError:
+            attempt = HTTP_RETRIES + 1
             break
         except urllib2.URLError:
             continue
         except httplib.HTTPException:
             continue
+        except socket.error:
+            continue
+    if attempt > HTTP_RETRIES:
+        pagesource = "<html></html>"
     page = html.fromstring( pagesource )
     return page
 
@@ -54,6 +60,9 @@ def laserParser(latexQuery):
     pageLinks = page.xpath('//div[@class="search-result"]/center/a/@href')[:NOTOPRES]
     pageContext = [ '$$' + x.strip() + '$$' for x in page.xpath('//div[@class="search-result"]/math/@alttext')[:NOTOPRES] ]
     results = zip(pageTitles, pageLinks, pageContext)
+    if len(results) != NOTOPRES:
+        print 'results < NOTOPRES', 'laserParser'
+        exit(0)
     return results
 
 def searchOnMathParser(latexQuery):
@@ -65,6 +74,9 @@ def searchOnMathParser(latexQuery):
     pageLinks = page.xpath('//section[@class="page_content"]/article[@class="result"]/h2/a/@href')[:NOTOPRES]
     pageContext = [ x.strip() for x in page.xpath('//section[@class="page_content"]/article[@class="result"]/div/div/text()')[:NOTOPRES] ]
     results = zip(pageTitles, pageLinks, pageContext)
+    if len(results) != NOTOPRES:
+        print 'results < NOTOPRES', 'searchOnMathParser'
+        exit(0)
     return results
 
 def transform(value):

@@ -1,10 +1,10 @@
-C^{\mu\lambda}B_{\lambda\nu}={\delta^{\mu}}_{\nu}
-\pi=\tilde{\pi}-\psi
-a_{\Delta_2-1}={1\over4(\Delta_1-1)(\Delta_2-1)}
-B_{ijkl}=C^m{}_{ijn}C^n{}_{lkm}
-S_{\mathrm{M}}\left(g,\Phi,\mathrm{Matter}\right)
-\lambda_0G(x,x,m^2)+\eta_0G^2(x,x,m^2)
-\langle{\bar{\psi}}_{+}{\bar{\chi}}_{-}\rangle
-\epsilon^{\prime}_{\mu\nu}=\epsilon_{\mu\nu}+\Lambda k_{\mu}k_{\nu}
-S\bar{z}=e^{-i\theta_{0}}z~{}
+\phi^{\prime}=\frac{\partial W}{\partial\phi}
 \Delta_{\alpha}=\frac{\partial}{\partial\theta_{\alpha}}
+r={m_{\eta}\over m_{p}}
+\epsilon_{\mu\nu}+\Lambda k_{\mu}k_{\nu}
+\sum_{i=1}^{m}x_{i}^{(m-1)}
+\langle\phi(x,t)-\phi_{c}(x,t)\rangle
+x^{+}\sim x^{+}+2\pi/\mu
+\psi=e^{\gamma\phi}
+\sum_{i=1}^{N}\frac{\partial}{\partial a_{i}}
+\eta^4-\eta^2

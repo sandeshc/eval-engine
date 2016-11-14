@@ -63,7 +63,7 @@ def dcg(systyp, q, users):
 			DCG[u] = 0.0
 			mxr = []
 			for k in range(K):
-				multiplier = (len(uqresults) - float(uqresults[k][1]) + 1)
+				multiplier = (len(uqresults) - float(uqresults[k][0]) + 1)
 				relevance = float(uqresults[k][2]) / 2.0 # divide by 2.0 to bring relevance in [0, 1]
 				if k > 0:
 					DCG[u] += multiplier * relevance / math.log(float(k + 1), 2)
@@ -73,7 +73,7 @@ def dcg(systyp, q, users):
 				avgmr[k][0] += multiplier
 				avgmr[k][1] += relevance
 			optDCG[u] = 0.0
-			sorted(mxr, reverse=True)
+			mxr = sorted(mxr, reverse=True)
 			for k in range(K):
 				if k > 0:
 					optDCG[u] += mxr[k] / math.log(float(k + 1), 2)
