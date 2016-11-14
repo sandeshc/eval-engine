@@ -6,3 +6,6 @@
 
 # ignore tex-backup files
 *.tex.backup
+
+# system specific config file
+sql-config.ini
