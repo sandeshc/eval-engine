@@ -115,8 +115,8 @@ def insertIntoDB(qid, queryResults, sysTyp):
     rank = 0
     for result in queryResults:
         rank += 1 
-        pid = insertIntoTableGetId('papers', result[1] + ' ' + result[0]) # TODO: to ignore/consider the paper title, for now ignored
-        query = "INSERT INTO modelresults (systyp, qid, rank, pid, context) VALUES(" + ",".join(["'%s'" % sysTyp, qid, str(rank), pid, "'%s'" % transform(result[2])]) + ")"
+        did = insertIntoTableGetId('docs', result[1] + ' ' + result[0]) # TODO: to ignore/consider the document title, for now ignored
+        query = "INSERT INTO modelresults (systyp, qid, rank, did, context) VALUES(" + ",".join(["'%s'" % sysTyp, qid, str(rank), did, "'%s'" % transform(result[2])]) + ")"
         # print query
         cursor.execute(query)
 
@@ -129,9 +129,9 @@ def main():
         print latexQuery
         qid = insertIntoTableGetId('queries', '$' + latexQuery + '$')
         somQR = searchOnMathParser(latexQuery)
-        insertIntoDB(qid, somQR, str(SOM))
+        insertIntoDB(qid, somQR, SOM)
         laserQR = laserParser(latexQuery)
-        insertIntoDB(qid, laserQR, str(LASER))
+        insertIntoDB(qid, laserQR, LASER)
     db.commit()
 
 if __name__ == '__main__':

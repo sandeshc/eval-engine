@@ -11,7 +11,7 @@ CREATE TABLE queries
     value VARCHAR( 5000 ) NOT NULL
 );
 
-CREATE TABLE papers
+CREATE TABLE docs
 (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     value VARCHAR( 5000 ) NOT NULL
@@ -19,27 +19,27 @@ CREATE TABLE papers
 
 CREATE TABLE modelresults
 (
-    systyp ENUM('0', '1') NOT NULL,
+    systyp INTEGER NOT NULL,
     qid INTEGER NOT NULL,
     rank INTEGER NOT NULL,
-    pid INTEGER NOT NULL,
+    did INTEGER NOT NULL,
     context VARCHAR( 5000 ) NOT NULL,
     PRIMARY KEY (qid, rank, systyp),
     FOREIGN KEY (qid) REFERENCES queries(id),
-    FOREIGN KEY (pid) REFERENCES papers(id)
+    FOREIGN KEY (did) REFERENCES docs(id)
 );
 
 CREATE TABLE evalresults
 (
 	uid INTEGER NOT NULL,
-    systyp ENUM('0', '1') NOT NULL,
+    systyp INTEGER NOT NULL,
     qid INTEGER NOT NULL,
     oldrank INTEGER NOT NULL,
     newrank INTEGER NOT NULL,
-    pid INTEGER NOT NULL,
+    did INTEGER NOT NULL,
     relevant ENUM('0', '1', '2') NOT NULL,
     PRIMARY KEY (uid, qid, oldrank, systyp),
     FOREIGN KEY (uid) REFERENCES users(id),
     FOREIGN KEY (qid) REFERENCES queries(id),
-    FOREIGN KEY (pid) REFERENCES papers(id)
+    FOREIGN KEY (did) REFERENCES docs(id)
 );

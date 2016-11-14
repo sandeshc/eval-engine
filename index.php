@@ -22,11 +22,11 @@
 	}
 	</script>
 
-	<title> LaSer Evaluation Engine </title>
+	<title> Generic Search Engine Evaluation System </title>
 </head>
 
 <body>
-	<h1> LaSer Evaluation Engine </h1>
+	<h1> Generic Search Engine Evaluation System </h1>
 	<div class="container" style="margin-top:50px">
 		<div class="row" style="margin-top:20px" >
 			<div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
@@ -62,30 +62,19 @@
 		<hr class="colorgraph">
 
 		<div>
-			<p>
-				LaSer is a search engine for mathematical formulae. 
-				<br/>The MathWebSearch system harvests the web for content representations (currently MathML) of formulae and indexes them using unigrams, 
-				bigrams and trigrams.
-				<br/>The query for now is limited to Latex format only and can and will be extended to free form queries. 
-				<!-- <br/>Our Project can be found on <a href="https://github.com/biswajitsc/LaSer">GitHub.</a> -->
-			</p>
-		</div>
-
-		<br/>
-
-		<div>
 			<h4> <strong> Guidelines for Evaluation </strong> </h4>
 			<ul>
 				<li> Each result can be marked as <strong>Relevant(2), Partially-Relevant(1) or Irrelevant(0)</strong>,
-					<br/>based on the extent of the relevance of the search query to the result (description of the paper + context) displayed. </li>
+					 based on the extent of the relevance of the search query to the result (document + context) displayed. </li>
 					<br/>
 				<li> The <strong>ordering of the results</strong> can be modified to reflect the order of <strong>relevance</strong> among the search results, 
-					<br/>with the most relevant results having the least rank (top most result). </li>
+					 with the most relevant results having the least rank (top most result). </li>
 					<br/>
-				<li> In case the <strong>same result (paper & context)</strong> is displayed multiple times then mark the first occourance as usual, and
-					<br/>mark the rest of them as Irrelevant(0). </li>
+				<li> In case the <strong>same result (document & context)</strong> is displayed multiple times then mark the first occourance as usual, and
+					 mark the rest of them as Irrelevant(0). </li>
 					<br/>
-				<li> <strong>Context</strong> represents the equation, kindly consider the <strong>structure</strong> of the equation as well </li>
+				<li> <strong>Description</strong> represents the ... </li>
+				<li> <strong>Context</strong> represents the ... </li>
 			</ul>
 		</div>
 	</div>

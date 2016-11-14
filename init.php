@@ -35,7 +35,7 @@ $userid = $row['id'];
 
 # Place to change the number of equations evaluated by user
 // $query = "SELECT * FROM queries WHERE id >= (SELECT FLOOR( MAX(id) * RAND()) FROM queries ) ORDER BY id LIMIT 10";
-$query = "SELECT * FROM queries ORDER BY id LIMIT 10";
+$query = "SELECT * FROM queries ORDER BY id LIMIT 5";
 $lorqid = db_select($query);
 
 if($lorqid === false)

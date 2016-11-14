@@ -8,7 +8,7 @@ $username = $_COOKIE['username'];
 $counter = $_COOKIE['counter'];
 $lorqid = unserialize($_COOKIE['lorqid']);
 
-# nsystems : number of systems (1 : { 0=>laser }, 2 : { 0=>laser, 1=>baseline_1 }, ...)
+# nsystems : number of systems
 $config = parse_ini_file('sql-config.ini');
 $nsystems = $config['nsystems'];
 
@@ -59,7 +59,7 @@ $qval = $result[0]['value'];
 		}
 	</style>
 
-	<title> LaSer Evaluation Engine </title>
+	<title> Generic Search Engine Evaluation System </title>
 </head>
 
 <body>
@@ -93,7 +93,7 @@ $qval = $result[0]['value'];
 				$systemResults = array();
 				for($s = 0; $s < $nsystems; $s++)
 				{
-					$query = "SELECT * FROM modelresults WHERE qid = " . $qid . " and systyp = '" . strval($systems[$s]) . "' ORDER BY rank";
+					$query = "SELECT * FROM modelresults WHERE qid = " . $qid . " and systyp = " . strval($systems[$s]) . " ORDER BY rank";
 					$systemResults[] = db_select($query);
 					if($systemResults[$s] === false) die("SQL Error: " . db_error());
 				}
@@ -116,7 +116,7 @@ $qval = $result[0]['value'];
 								<tr>
 									<th> Rank </th>
 									<th> Link </th>
-									<th> Paper </th>
+									<th> Document </th>
 									<th> Context </th>
 									<th> Relevance </th>
 								</tr>
@@ -126,20 +126,20 @@ $qval = $result[0]['value'];
 					// Generating the result-table contents
 					for($i = 0; $i < $mincount; $i++)
 					{
-						$query = "SELECT * FROM papers WHERE id = " . trim($systemResults[$s][strval($i)]['pid'], '\'');
+						$query = "SELECT * FROM docs WHERE id = " . trim($systemResults[$s][strval($i)]['did'], '\'');
 						$result = db_select($query);
 						if($result === false) die("SQL Error: " . db_error());
-						$paperval = explode(" ", $result['0']['value'], 2);
-						$paperlink = $paperval[0];
-						$papertitle = $paperval[1];
+						$docval = explode(" ", $result['0']['value'], 2);
+						$doclink = $docval[0];
+						$doctitle = $docval[1];
 
 						echo '<tr>
 						<td> ' . $systemResults[$s][strval($i)]['rank'] . '
 						<input type="hidden" class="newrank" name="newrank-'.chr($s + 65).'-'.strval($i).'"
 							value="'.$systemResults[$s][strval($i)]['rank'].'"/> </td>
-						<td> <a href="' . $paperlink . '" target="_blank"> &#9733; </a>
-						<input type="hidden" name="pid-'.chr($s + 65).'-'.strval($i).'" value="'.$systemResults[$s][strval($i)]['pid'].'"/> </td>
-						<td> ' . $papertitle . ' </td>
+						<td> <a href="' . $doclink . '" target="_blank"> &#9733; </a>
+						<input type="hidden" name="did-'.chr($s + 65).'-'.strval($i).'" value="'.$systemResults[$s][strval($i)]['did'].'"/> </td>
+						<td> ' . $doctitle . ' </td>
 						<td> ' . $systemResults[$s][strval($i)]['context'] . ' </td>
 						<td class="Center-Container"> <input class="rel-bar Absolute-Center" style="width:50%" type="range" min="0" max="2" step="1" value="1" name="rel-bar-'.chr($s + 65).'-'.strval($i).'"/> </td>
 						</tr>';

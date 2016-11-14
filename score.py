@@ -2,17 +2,17 @@ import MySQLdb as mysqldb
 import ConfigParser
 import math
 
-# number of search systems
-S = 2
-# number of search results per query
-K = 5
-
 # establishing database connection
-sqlconf = ConfigParser.ConfigParser()
-sqlconf.read('sql-config.ini')
-db = mysqldb.connect(sqlconf.get('database', 'server'), sqlconf.get('database', 'username'), 
-		sqlconf.get('database', 'password'), sqlconf.get('database', 'dbname'))
+config = ConfigParser.ConfigParser()
+config.read('sql-config.ini')
+db = mysqldb.connect(config.get('database', 'server'), config.get('database', 'username'), 
+		config.get('database', 'password'), config.get('database', 'dbname'))
 cursor = db.cursor()
+
+# number of search systems
+S = int( config.get('evaluation', 'nsystems') )
+# number of search results per query
+K = int( config.get('evaluation', 'ntopres') )
 
 def precision(systyp, q, users):
 	global K
@@ -21,7 +21,7 @@ def precision(systyp, q, users):
 	avgrel = [0.0] * K
 	for u in users:
 		query = "SELECT oldrank, relevant FROM evalresults WHERE uid = " + str(u) + " AND qid = " + str(q) + \
-			" AND systyp = '" + str(systyp) + "' ORDER BY oldrank;"
+			" AND systyp = " + str(systyp) + " ORDER BY oldrank;"
 		cursor.execute(query)
 		uqresults = cursor.fetchall()
 		if len(uqresults) < K:
@@ -53,7 +53,7 @@ def dcg(systyp, q, users):
 	avgmr = [[0.0, 0.0]] * K
 	for u in users:
 		query = "SELECT oldrank, newrank, relevant FROM evalresults WHERE uid = " + str(u) + " AND qid = " + str(q) + \
-			" AND systyp = '" + str(systyp) + "' ORDER BY oldrank;"
+			" AND systyp = " + str(systyp) + " ORDER BY oldrank;"
 		cursor.execute(query)
 		uqresults = cursor.fetchall()
 		if len(uqresults) < K:
@@ -124,7 +124,7 @@ def main():
 		P = {}
 		D = {}
 		nD = {}
-		query = "SELECT DISTINCT qid, uid FROM evalresults WHERE systyp=\'" + str(systyp) + "\' ORDER BY qid, uid;"
+		query = "SELECT DISTINCT qid, uid FROM evalresults WHERE systyp=" + str(systyp) + " ORDER BY qid, uid;"
 		cursor.execute(query)
 		qulist = cursor.fetchall()
 		qudict = {}
