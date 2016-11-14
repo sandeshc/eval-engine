@@ -1,0 +1,33 @@
+-- ADDING COLUM 'DID'
+ALTER TABLE modelresults ADD did INTEGER NOT NULL;
+UPDATE modelresults SET did = pid;
+ALTER TABLE modelresults ADD CONSTRAINT FOREIGN KEY (did) REFERENCES docs(id);
+
+-- DROPPING COLUMN 'PID'
+-- Below query is to get the unique identifier for foreign key constraint
+select * from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS where TABLE_NAME='modelresults' \
+and REFERENCED_TABLE_NAME='papers' and CONSTRAINT_SCHEMA='designlab';
+alter table modelresults DROP FOREIGN KEY modelresults_ibfk_2;
+alter table modelresults drop column pid;
+
+==========================================================================================
+
+-- ADDING COLUM 'DID'
+ALTER TABLE evalresults ADD did INTEGER NOT NULL;
+UPDATE evalresults SET did = pid;
+ALTER TABLE evalresults ADD CONSTRAINT FOREIGN KEY (did) REFERENCES docs(id);
+
+-- DROPPING COLUMN 'PID'
+-- Below query is to get the unique identifier for foreign key constraint
+select * from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS where TABLE_NAME='evalresults' \
+and REFERENCED_TABLE_NAME='papers' and CONSTRAINT_SCHEMA='designlab';
+alter table evalresults DROP FOREIGN KEY evalresults_ibfk_3;
+alter table evalresults drop column pid;
+
+==========================================================================================
+
+alter table modelresults change systyp systyp integer not null;
+update modelresults set systyp = systyp - 1;
+
+alter table evalresults change systyp systyp integer not null;
+update evalresults set systyp = systyp - 1;
