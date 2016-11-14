@@ -43,12 +43,6 @@ if($lorqid === false)
 	die('SQL Error: ' . db_error());
 }
 
-// foreach ($lorqid as $value) 
-// {
-// 	print_r($value);
-// 	echo '<br/>';
-// }
-
 $exptime = time() + 3600;
 setcookie('userid', $userid, $exptime);
 setcookie('username', $username, $exptime);
