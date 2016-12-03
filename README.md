@@ -36,7 +36,8 @@ the basis for which has been discussed in brief and recored in `txt/eval-basis.t
 
 ## Usage
 
-1. Make a copy of the `sql-config-template.ini` as `sql-config.ini`
-2. Make a db for the system, initialize using cmds from sql/
-3. Fill the information about the db and data in `sql-config.ini`
-4. Host the folder on a server and viola !
+1. Install `LAMP` stack as `Apache`, `MySQL` and `PHP` are required. *(For linux users : [LAMP](https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu))*
+2. Make a copy of the `sql-config-template.ini` as `sql-config.ini`
+3. Make a db for the system, initialize using cmds from sql/
+4. Fill the information about the db and data in `sql-config.ini`
+5. Host folder on the Apache server and viola !
